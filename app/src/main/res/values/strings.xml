@@ -1,0 +1,40 @@
+<resources>
+    <string name="app_name">Chợ Good</string>
+    <string name="action_settings">Settings</string>
+
+
+    <string name="btn_login">LOGIN</string>
+    <string name="btn_register">REGISTER</string>
+    <string name="btn_link_to_register">Not a member? Sign up now.</string>
+    <string name="btn_link_to_login">Already registred! Login Me.</string>
+    <string name="welcome">Welcome</string>
+    <string name="btn_logout">LOGOUT</string>
+    <string name="name">Fullname</string>
+    <string name="title_activity_list">ListActivity</string>
+    <string name="title_activity_user_product">UserProductActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="hint_name">Username</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_cfPass">Confirm Password</string>
+
+    <string name="btn_sign_up">Sign Up</string>
+
+    <string name="err_msg_name">Enter your full name</string>
+    <string name="err_msg_email">Enter valid email address</string>
+    <string name="err_msg_password">Enter the password</string>
+    <string name="err_msg_pass_not_match">Password does not match</string>
+    <string name="err_username_lenght">username must be between 6-14 characters.</string>
+    <string name="err_pass_lenght">password must be between 6-14 characters.</string>
+    <string name="article_detail_more_info">More Info</string>
+    <string name="hello_world">Hello world!</string>
+
+    <string name="text_content">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin consectetur diam id aliquam scelerisque. Donec ultrices lacus vel </string>
+
+    <string name="user_name">Delaroy</string>
+    <string name="lorem_ipsum">Sugar plum sugar plum gummies donut jelly powder. Icing muffin cheesecake liquorice wafer bonbon. Bonbon tootsie roll halvah. Lollipop macaroon bear claw chocolate cake. Chocolate bar gummi bears candy cheesecake icing oat cake. Cake chocolate cake liquorice pie. Donut halvah lollipop. Bear claw lollipop sweet roll cookie dragée dragée donut candy. Cheesecake liquorice marzipan dragée muffin chocolate dessert jujubes. Cupcake ice cream tootsie roll bonbon croissant gingerbread ice cream danish. Jelly beans donut jujubes sugar plum. Tootsie roll tiramisu chupa chups dragée cheesecake brownie chocolate bar chocolate bar icing. Apple pie cake carrot cake gingerbread candy canes</string>
+
+
+</resources>
