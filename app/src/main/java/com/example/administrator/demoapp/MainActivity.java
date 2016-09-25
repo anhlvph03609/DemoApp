@@ -19,24 +19,34 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.administrator.demoapp.adapter.RecyclerViewAdapter;
+import com.example.administrator.demoapp.helper.SQLiteHandler;
+import com.example.administrator.demoapp.helper.SessionManager;
 import com.example.administrator.demoapp.model.ItemObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-        TextView tvName;
-        String username;
-    private LinearLayoutManager lLayout;
+        TextView tvName,tvEmail;
+        String username,email;
+        private SQLiteHandler db;
+        private SessionManager session;
+        private LinearLayoutManager lLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        username = getIntent().getStringExtra("username");
+        session = new SessionManager(getApplicationContext());
+        db = new SQLiteHandler(getApplicationContext());
+        HashMap<String, String> user = db.getUserDetails();
+        username = user.get("username");
+        email = user.get("email");
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -45,6 +55,9 @@ public class MainActivity extends AppCompatActivity
                 startActivity(in);
             }
         });
+        if (!session.isLoggedIn()) {
+            logoutUser();
+        }
 
         List<ItemObject> rowListItem = getAllItemList();
         lLayout = new LinearLayoutManager(MainActivity.this);
@@ -64,8 +77,10 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         View headerLayout = navigationView.getHeaderView(0);
-       tvName= (TextView) headerLayout.findViewById(R.id.tvUsername);
+        tvName= (TextView) headerLayout.findViewById(R.id.tvUsername);
+        tvEmail = (TextView) headerLayout.findViewById(R.id.tvEmail);
         tvName.setText(username);
+        tvEmail.setText(email);
         navigationView.setNavigationItemSelectedListener(this);
 
     }
@@ -110,17 +125,24 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_add) {
           Intent in = new Intent(MainActivity.this,AddProductActivity.class);
-            in.putExtra("username",username);
+
             startActivity(in);
         } else if (id == R.id.nav_all) {
             Intent in = new Intent(MainActivity.this,ListActivity.class);
-            in.putExtra("username",username);
+
             startActivity(in);
         } else if (id == R.id.nav_logout) {
+            session.setLogin(false);
 
+            db.deleteUsers();
+
+            // Launching the login activity
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
         } else if (id == R.id.nav_myPro) {
             Intent in = new Intent(MainActivity.this,UserProductActivity.class);
-            in.putExtra("username",username);
+
             startActivity(in);
         } else if (id == R.id.nav_share) {
 
@@ -143,5 +165,15 @@ public class MainActivity extends AppCompatActivity
         allItems.add(new ItemObject("Tất cả danh múc", R.drawable.pencils));
 
         return allItems;
+    }
+    private void logoutUser() {
+        session.setLogin(false);
+
+        db.deleteUsers();
+
+        // Launching the login activity
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

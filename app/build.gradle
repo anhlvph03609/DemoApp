@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.administrator.demoapp"
-        minSdkVersion 7
+        minSdkVersion 9
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -34,4 +34,5 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:23.0.+'
     compile 'com.github.bumptech.glide:glide:3.6.1'
     compile 'com.android.support:palette-v7:22.2.0'
+    compile 'com.mcxiaoke.volley:library-aar:1.0.0'
 }

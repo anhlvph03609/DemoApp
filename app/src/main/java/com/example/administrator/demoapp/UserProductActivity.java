@@ -19,6 +19,7 @@ import com.amigold.fundapter.BindDictionary;
 import com.amigold.fundapter.FunDapter;
 import com.amigold.fundapter.extractors.StringExtractor;
 import com.amigold.fundapter.interfaces.DynamicImageLoader;
+import com.example.administrator.demoapp.helper.SQLiteHandler;
 import com.example.administrator.demoapp.model.Product;
 import com.example.administrator.demoapp.model.UILConfig;
 import com.kosalgeek.android.json.JsonConverter;
@@ -37,13 +38,16 @@ public class UserProductActivity extends AppCompatActivity implements AsyncRespo
     private FunDapter<Product> adapter;
     TextView tvErr;
     String username;
+    private SQLiteHandler db;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_product);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        username = getIntent().getStringExtra("username");
+        db = new SQLiteHandler(getApplicationContext());
+        HashMap<String, String> user = db.getUserDetails();
+        username = user.get("username");
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         tvErr = (TextView) findViewById(R.id.TvNoProduct);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -59,9 +63,9 @@ public class UserProductActivity extends AppCompatActivity implements AsyncRespo
         ImageLoader.getInstance().init(UILConfig.config(UserProductActivity.this));
         HashMap data = new HashMap();
         data.put("action","getUserProduct");
-        data.put("username",getIntent().getStringExtra("username").toString());
+        data.put("username",username);
         PostResponseAsyncTask taskRead = new PostResponseAsyncTask(UserProductActivity.this, data, this);
-        taskRead.execute("http://demophp2.esy.es/product.php");
+        taskRead.execute("http://192.168.56.1:80/customer/product.php");
 
         registerForContextMenu(lvProduct);
     }

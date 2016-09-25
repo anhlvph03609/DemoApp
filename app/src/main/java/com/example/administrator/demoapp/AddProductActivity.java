@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.administrator.demoapp.helper.SQLiteHandler;
 import com.kosalgeek.android.photoutil.GalleryPhoto;
 import com.kosalgeek.android.photoutil.ImageBase64;
 import com.kosalgeek.android.photoutil.ImageLoader;
@@ -29,6 +30,7 @@ public class AddProductActivity extends AppCompatActivity {
     private Button btnAdd;
     GalleryPhoto galleryPhoto;
     String selectedPhoto;
+    private SQLiteHandler db;
     final  int GALLERY_REQUEST =  1111;
     String username ;
     @Override
@@ -37,7 +39,10 @@ public class AddProductActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_product);
         edtName = (EditText) findViewById(R.id.edtAddName);
         edtPrice = (EditText) findViewById(R.id.edtAddPrice);
-        username = getIntent().getStringExtra("username");
+        db = new SQLiteHandler(getApplicationContext());
+        HashMap<String, String> user = db.getUserDetails();
+        username = user.get("username");
+
 
         btnAdd = (Button) findViewById(R.id.btnAdd);
         imgProduct =(ImageView) findViewById(R.id.Addimg);
@@ -62,7 +67,7 @@ public class AddProductActivity extends AppCompatActivity {
                     postData.put("txtName",edtName.getText().toString());
                     postData.put("txtPrice",edtPrice.getText().toString());
                     postData.put("txtUsername",username);
-                    postData.put("txtImageUrl","http://demophp2.esy.es/upload/"+date+".jpeg");
+                    postData.put("txtImageUrl","http://192.168.56.1:80/customer/upload/"+date+".jpeg");
                     postData.put("image",encodedPhoto);
                     postData.put("imageName",date.toString());
                     postData.put("mobile","android");
@@ -80,7 +85,7 @@ public class AddProductActivity extends AppCompatActivity {
                             }
                         }
                     });
-                    insertTask.execute("http://demophp2.esy.es/insert.php");
+                    insertTask.execute("http://192.168.56.1:80/customer/insert.php");
                 } catch (FileNotFoundException e) {
                     Toast.makeText(getApplicationContext(),"Something wrong while endcoding photo!",Toast.LENGTH_LONG).show();
                 }

@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.administrator.demoapp.helper.SQLiteHandler;
 import com.example.administrator.demoapp.model.Product;
 import com.kosalgeek.android.photoutil.GalleryPhoto;
 import com.kosalgeek.android.photoutil.ImageBase64;
@@ -33,11 +34,16 @@ public class UpdateProductActivity extends AppCompatActivity {
     GalleryPhoto galleryPhoto;
     String selectedPhoto;
     String username;
+    private SQLiteHandler db;
     final  int GALLERY_REQUEST =  1111;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_product);
+        db = new SQLiteHandler(getApplicationContext());
+        HashMap<String, String> user = db.getUserDetails();
+        username = user.get("username");
+
         edtUpdateName = (EditText) findViewById(R.id.edtUpdateName);
         edtUpdatePrice = (EditText) findViewById(R.id.edtUpdatePrice);
 
@@ -46,6 +52,7 @@ public class UpdateProductActivity extends AppCompatActivity {
         btnUpdate = (Button) findViewById(R.id.btnUpdate);
         imgChoose = (ImageView) findViewById(R.id.imgChoose);
         product = (Product) getIntent().getSerializableExtra("product");
+
         if(product!=null) {
             edtUpdateName.setText(product.name);
             edtURL.setText(product.image_url);
@@ -85,7 +92,7 @@ public class UpdateProductActivity extends AppCompatActivity {
                             }
                         }
                     });
-                    insertTask.execute("http://demophp2.esy.es/update.php");
+                    insertTask.execute("http://192.168.56.1:80/customer/update.php");
                 }
                 else
                 {

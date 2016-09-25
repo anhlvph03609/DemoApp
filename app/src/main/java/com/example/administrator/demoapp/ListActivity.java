@@ -59,7 +59,7 @@ public class ListActivity extends AppCompatActivity implements AsyncResponse {
         HashMap data = new HashMap();
         data.put("action","ShowAll");
         PostResponseAsyncTask taskRead = new PostResponseAsyncTask(ListActivity.this, data, this);
-        taskRead.execute("http://demophp2.esy.es/product.php");
+        taskRead.execute("http://192.168.56.1:80/customer/product.php");
 
         lvProduct.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
