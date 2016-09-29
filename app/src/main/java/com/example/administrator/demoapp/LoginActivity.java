@@ -104,7 +104,7 @@ public class LoginActivity extends AppCompatActivity {
         showDialog();
 
         StringRequest strReq = new StringRequest(Request.Method.POST,
-                "http://192.168.56.1:80/customer/", new Response.Listener<String>() {
+                "http://192.168.56.1:8080/customer/", new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {

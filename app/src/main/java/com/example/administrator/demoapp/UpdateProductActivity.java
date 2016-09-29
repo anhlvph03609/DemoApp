@@ -92,7 +92,7 @@ public class UpdateProductActivity extends AppCompatActivity {
                             }
                         }
                     });
-                    insertTask.execute("http://192.168.56.1:80/customer/update.php");
+                    insertTask.execute("http://192.168.56.1:8080/customer/update.php");
                 }
                 else
                 {

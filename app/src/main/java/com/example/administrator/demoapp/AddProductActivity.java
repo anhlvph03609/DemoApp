@@ -67,7 +67,7 @@ public class AddProductActivity extends AppCompatActivity {
                     postData.put("txtName",edtName.getText().toString());
                     postData.put("txtPrice",edtPrice.getText().toString());
                     postData.put("txtUsername",username);
-                    postData.put("txtImageUrl","http://192.168.56.1:80/customer/upload/"+date+".jpeg");
+                    postData.put("txtImageUrl","http://192.168.56.1:8080/customer/upload/"+date+".jpeg");
                     postData.put("image",encodedPhoto);
                     postData.put("imageName",date.toString());
                     postData.put("mobile","android");

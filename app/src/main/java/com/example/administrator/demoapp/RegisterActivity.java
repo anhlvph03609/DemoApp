@@ -87,7 +87,7 @@ public class RegisterActivity extends AppCompatActivity {
                 }
             }
         });
-        task1.execute("http://192.168.1.15:8080/customer/register.php");
+        task1.execute("http://192.168.56.1:8080/customer/register.php");
     }
 
     private boolean validateName() {

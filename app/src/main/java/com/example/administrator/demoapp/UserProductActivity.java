@@ -65,7 +65,7 @@ public class UserProductActivity extends AppCompatActivity implements AsyncRespo
         data.put("action","getUserProduct");
         data.put("username",username);
         PostResponseAsyncTask taskRead = new PostResponseAsyncTask(UserProductActivity.this, data, this);
-        taskRead.execute("http://192.168.56.1:80/customer/product.php");
+        taskRead.execute("http://192.168.56.1:8080/customer/product.php");
 
         registerForContextMenu(lvProduct);
     }
@@ -101,7 +101,7 @@ public class UserProductActivity extends AppCompatActivity implements AsyncRespo
                     }
                 }
             });
-            taskRemove.execute("http://demophp2.esy.es/remove.php");
+            taskRemove.execute("http://192.168.56.1:8080/customer/remove.php");
         }
         return super.onContextItemSelected(item);
 
