@@ -1,5 +1,6 @@
 package com.example.administrator.demoapp;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -8,23 +9,34 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.example.administrator.demoapp.helper.AppController;
 import com.kosalgeek.genasync12.AsyncResponse;
 import com.kosalgeek.genasync12.PostResponseAsyncTask;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.HashMap;
+import java.util.Map;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    EditText edtUsername,edtPass,edtConfPass,edtEmail;
+    EditText edtUsername,edtPass,edtConfPass,edtEmail,edtFullName,edtPhone;
     Button btnRegister;
-    String username,pass,confPass,email;
-    private TextInputLayout inputLayoutName, inputLayoutEmail, inputLayoutPassword,inputLayoutCfPass;
+    String username,pass,confPass,email,fullname,phone;
+    private ProgressDialog pDialog;
+    private TextInputLayout inputLayoutName, inputLayoutEmail, inputLayoutPassword,inputLayoutCfPass,inputLayoutFullName,inputLayoutPhone;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,9 +46,15 @@ public class RegisterActivity extends AppCompatActivity {
         edtPass = (EditText) findViewById(R.id.input_password);
         edtEmail =(EditText) findViewById(R.id.input_email);
         edtConfPass = (EditText) findViewById(R.id.input_cfpassword);
+        edtFullName = (EditText) findViewById(R.id.input_fullname);
+        edtPhone =  (EditText) findViewById(R.id.input_phone);
         btnRegister = (Button) findViewById(R.id.btn_register);
+        pDialog = new ProgressDialog(this);
+        pDialog.setCancelable(false);
         inputLayoutName = (TextInputLayout) findViewById(R.id.input_layout_name);
         inputLayoutEmail = (TextInputLayout) findViewById(R.id.input_layout_email);
+        inputLayoutFullName = (TextInputLayout) findViewById(R.id.input_layout_fullname);
+        inputLayoutPhone = (TextInputLayout) findViewById(R.id.input_layout_phone);
         inputLayoutPassword = (TextInputLayout) findViewById(R.id.input_layout_password);
         inputLayoutCfPass = (TextInputLayout) findViewById(R.id.input_layout_cfpassword) ;
         btnRegister.setOnClickListener(new View.OnClickListener() {
@@ -64,30 +82,96 @@ public class RegisterActivity extends AppCompatActivity {
         if(!validateCfPass()){
             return;
         }
+        if(!validateFullName()){
+            return;
+        }
+        if(!validatePhone()){
+            return;
+        }
         username = edtUsername.getText().toString().trim();
         pass = edtPass.getText().toString().trim();
         email = edtEmail.getText().toString().trim();
-        HashMap postData = new HashMap();
-        postData.put("txtUsername", username);
-        postData.put("txtPass", pass);
-        postData.put("txtEmail",email);
-        PostResponseAsyncTask task1 = new PostResponseAsyncTask(RegisterActivity.this, postData, new AsyncResponse() {
+        fullname = edtFullName.getText().toString().trim();
+        phone = edtPhone.getText().toString().trim();
+       checkReg(username,fullname,email,phone,pass);
+    }
+    private void checkReg(final String username,final String fullname,final String email,final String phone, final String password) {
+        // Tag used to cancel the request
+        String tag_string_req = "req_login";
+
+        pDialog.setMessage("Logging in ...");
+        showDialog();
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                "http://demophp2.esy.es/user.php", new Response.Listener<String>() {
+
             @Override
-            public void processFinish(String s) {
-                if (s.equals("success")) {
-                    Toast.makeText(RegisterActivity.this, "Register Successfully !", Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent(RegisterActivity.this,LoginActivity.class);
-                    startActivity(intent);
+            public void onResponse(String response) {
+                //Log.d("TAG", "Login Response: " + response.toString());
+                hideDialog();
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+                    Toast.makeText(getBaseContext(),response,Toast.LENGTH_LONG).show();
+                    // Check for error node in json
+                    if (!error) {
+                        Toast.makeText(RegisterActivity.this, "Register successfully!", Toast.LENGTH_SHORT).show();
+                        Intent i = new Intent(RegisterActivity.this,LoginActivity.class);
+                        startActivity(i);
+                    } else {
+                        // Error in login. Get the error message
+                        String errorMsg = jObj.getString("error_msg");
+                        Toast.makeText(getApplicationContext(),
+                                errorMsg, Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    // JSON error
+                    e.printStackTrace();
+                    Toast.makeText(getApplicationContext(), "Json error: " + e.toString(), Toast.LENGTH_LONG).show();
                 }
-                else if(s.equals("exists")){
-                    Toast.makeText(RegisterActivity.this, "Username already exists!", Toast.LENGTH_LONG).show();
-                }
-                else{
-                    Toast.makeText(RegisterActivity.this,s, Toast.LENGTH_LONG).show();
-                }
+
             }
-        });
-        task1.execute("http://192.168.56.1:8080/customer/register.php");
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("TAG", "Login Error: " + error.getMessage());
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+                hideDialog();
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to login url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("txtEmail", email);
+                params.put("txtPassword", password);
+                params.put("txtUsername",username);
+                params.put("txtPhone",phone);
+                params.put("txtFullName",fullname);
+                params.put("action","register");
+                return params;
+            }
+
+        };
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+
+
+    }
+
+    private void showDialog() {
+        if (!pDialog.isShowing())
+            pDialog.show();
+    }
+
+    private void hideDialog() {
+        if (pDialog.isShowing())
+            pDialog.dismiss();
     }
 
     private boolean validateName() {
@@ -103,6 +187,41 @@ public class RegisterActivity extends AppCompatActivity {
         }
         else {
             inputLayoutName.setErrorEnabled(false);
+        }
+
+        return true;
+    }
+    private boolean validateFullName() {
+        if (edtFullName.getText().toString().trim().isEmpty()) {
+            inputLayoutFullName.setError(getString(R.string.err_msg_name));
+            requestFocus(edtFullName);
+            return false;
+        }
+        else if(edtFullName.getText().toString().trim().length()<6){
+            inputLayoutFullName.setError(getString(R.string.err_username_lenght));
+            requestFocus(edtFullName);
+            return false;
+        }
+        else {
+            inputLayoutFullName.setErrorEnabled(false);
+        }
+
+        return true;
+    }
+
+    private boolean validatePhone() {
+        if (edtPhone.getText().toString().trim().isEmpty()) {
+            inputLayoutPhone.setError(getString(R.string.err_msg_name));
+            requestFocus(edtPhone);
+            return false;
+        }
+        else if(edtPhone.getText().toString().trim().length()<10){
+            inputLayoutPhone.setError(getString(R.string.err_username_lenght));
+            requestFocus(edtPhone);
+            return false;
+        }
+        else {
+            inputLayoutPhone.setErrorEnabled(false);
         }
 
         return true;
@@ -189,6 +308,12 @@ public class RegisterActivity extends AppCompatActivity {
                     break;
                 case R.id.input_cfpassword:
                     validateCfPass();
+                    break;
+                case R.id.input_fullname:
+                    validateFullName();
+                    break;
+                case R.id.input_phone:
+                    validatePhone();
                     break;
             }
         }

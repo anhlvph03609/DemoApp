@@ -104,7 +104,7 @@ public class LoginActivity extends AppCompatActivity {
         showDialog();
 
         StringRequest strReq = new StringRequest(Request.Method.POST,
-                "http://192.168.56.1:8080/customer/", new Response.Listener<String>() {
+                "http://demophp2.esy.es/user.php", new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {
@@ -127,10 +127,11 @@ public class LoginActivity extends AppCompatActivity {
                         JSONObject user = jObj.getJSONObject("user");
                         String name = user.getString("username");
                         String email = user.getString("email");
-
+                        String phone = user.getString("phone");
+                        String fullname = user.getString("fullName");
 
                         // Inserting row in users table
-                        db.addUser(name, email, uid);
+                        db.addUser(name, email,fullname,phone, uid);
 
                         // Launch main activity
                         Intent intent = new Intent(LoginActivity.this,
@@ -146,7 +147,7 @@ public class LoginActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     // JSON error
                     e.printStackTrace();
-                    Toast.makeText(getApplicationContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Json error: " + e.toString(), Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -167,7 +168,7 @@ public class LoginActivity extends AppCompatActivity {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("txtUsername", email);
                 params.put("txtPassword", password);
-
+                params.put("action","login");
                 return params;
             }
 
